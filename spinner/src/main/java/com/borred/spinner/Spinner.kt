@@ -30,6 +30,7 @@ fun Spinner(
     ) { measurables, constraints ->
         val minSide = minOf(constraints.maxWidth, constraints.maxHeight)
         layout(width = minSide, height = minSide) {
+            // if there is single item, then place it in center
             if (measurables.size == 1) {
                 val halfItemSizePx = (itemSize / 2).roundToPx()
                 measurables.single().measure(
@@ -45,11 +46,14 @@ fun Spinner(
                 )
                 return@layout
             }
+
+            // otherwise calculate positions
         }
     }
 }
 
 @Preview
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 @Composable
 private fun Spinner_Preview(
     modifier: Modifier = Modifier
