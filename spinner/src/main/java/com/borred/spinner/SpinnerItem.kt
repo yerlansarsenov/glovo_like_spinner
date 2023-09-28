@@ -18,9 +18,9 @@ import kotlin.random.Random
 @Composable
 internal fun SpinnerItem(
     index: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = rememberRandomColor()
 ) {
-    val color = rememberRandomColor()
     Box(
         modifier = modifier
             .clip(CircleShape)

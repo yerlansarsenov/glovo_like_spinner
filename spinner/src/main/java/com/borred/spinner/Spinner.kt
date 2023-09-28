@@ -10,6 +10,10 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 fun Spinner(
@@ -23,6 +27,7 @@ fun Spinner(
             repeat(count) {
                 SpinnerItem(
                     index = it,
+                    color = Color.Black,
                     modifier = Modifier.size(itemSize)
                 )
             }
@@ -30,36 +35,93 @@ fun Spinner(
     ) { measurables, constraints ->
         val minSide = minOf(constraints.maxWidth, constraints.maxHeight)
         layout(width = minSide, height = minSide) {
+            val halfItemSizePx = (itemSize / 2).roundToPx()
+            val radius = minSide / 2 - halfItemSizePx
+            val itemConstraints = constraints.copy(
+                minWidth = 0,
+                maxWidth = minSide,
+                minHeight = 0,
+                maxHeight = minSide
+            )
             // if there is single item, then place it in center
             if (measurables.size == 1) {
-                val halfItemSizePx = (itemSize / 2).roundToPx()
-                measurables.single().measure(
-                    constraints.copy(
-                        minWidth = 0,
-                        maxWidth = minSide,
-                        minHeight = 0,
-                        maxHeight = minSide
-                    )
-                ).place(
-                    x = minSide / 2 - halfItemSizePx,
-                    y = minSide / 2 - halfItemSizePx
-                )
+                measurables.single()
+                    .measure(constraints = itemConstraints)
+                    .place(x = radius, y = radius)
                 return@layout
             }
-
+            val angles = (measurables.indices).map { index ->
+                val degree = index * (360 / measurables.size)
+                degree.toRadian()
+            }
+            for (i in measurables.indices) {
+                val angle = angles[i]
+                val x = radius * (1 + cos(angle))
+                val y = radius * (1 + sin(angle))
+                measurables[i]
+                    .measure(itemConstraints)
+                    .place(x = x.roundToInt(), y = y.roundToInt())
+            }
             // otherwise calculate positions
         }
     }
 }
 
-@Preview
-@Preview(device = "spec:parent=pixel_5,orientation=landscape")
+private fun Int.toRadian(): Double = this / 180f * PI
+
+@Preview(name = "single item")
+@Preview(device = "spec:parent=pixel_5,orientation=landscape", name = "single item horizontal")
 @Composable
 private fun Spinner_Preview(
     modifier: Modifier = Modifier
 ) {
     Spinner(
         count = 1,
+        itemSize = 50.dp,
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    )
+}
+
+@Preview(name = "three items")
+@Preview(device = "spec:parent=pixel_5,orientation=landscape", name = "three items horizontal")
+@Composable
+private fun Spinner3_Preview(
+    modifier: Modifier = Modifier
+) {
+    Spinner(
+        count = 3,
+        itemSize = 50.dp,
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    )
+}
+
+@Preview(name = "four items")
+@Preview(device = "spec:parent=pixel_5,orientation=landscape", name = "four items horizontal")
+@Composable
+private fun Spinner4_Preview(
+    modifier: Modifier = Modifier
+) {
+    Spinner(
+        count = 4,
+        itemSize = 50.dp,
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    )
+}
+
+@Preview(name = "five items")
+@Preview(device = "spec:parent=pixel_5,orientation=landscape", name = "five items horizontal")
+@Composable
+private fun Spinner5_Preview(
+    modifier: Modifier = Modifier
+) {
+    Spinner(
+        count = 5,
         itemSize = 50.dp,
         modifier = modifier
             .fillMaxSize()
