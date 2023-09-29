@@ -46,7 +46,7 @@ private fun Spinner3_Preview(
 ) {
     Spinner(
         count = 3,
-        itemSize = 50.dp,
+        itemSize = 150.dp,
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
