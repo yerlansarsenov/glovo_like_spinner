@@ -2,6 +2,7 @@ package com.borred.spinner
 
 import android.util.Log
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.verticalDrag
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -33,17 +34,10 @@ fun Spinner(
     }
     Layout(
         modifier = modifier.pointerInput(Unit) {
-            coroutineScope {
-                while (this.isActive) {
-                    val pointerId = awaitPointerEventScope { awaitFirstDown().id }
-                    awaitPointerEventScope {
-                        verticalDrag(pointerId) { change ->
-                            val verticalDragOffset = change.positionChange().y
-                            angleDiffInDegree += verticalDragOffset.roundToInt()
-                            Log.e("HERE!!", "Spinner: verticalDragOffset = $verticalDragOffset")
-                        }
-                    }
-                }
+            detectDragGestures { change, dragAmount ->
+                val verticalDragOffset = change.positionChange().y
+                angleDiffInDegree += verticalDragOffset.roundToInt()
+                Log.e("HERE!!", "Spinner: verticalDragOffset = $verticalDragOffset")
             }
         },
         content = {
